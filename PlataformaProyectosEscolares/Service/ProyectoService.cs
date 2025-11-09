@@ -1,4 +1,5 @@
-﻿using PlataformaProyectosEscolares.Data;
+﻿// Service/ProyectoService.cs
+using PlataformaProyectosEscolares.Data;
 using System.Data;
 using System.Windows.Forms;
 
@@ -29,6 +30,13 @@ namespace PlataformaProyectosEscolares.Service
             return _dbHelper.InsertarProyecto(titulo, descripcion, estudianteId, profesorId);
         }
 
+        // === NUEVA SOBRECARGA con archivo ===
+        public bool InsertarProyecto(string titulo, string descripcion, int estudianteId, int profesorId, string archivoPath)
+        {
+            return _dbHelper.InsertarProyecto(titulo, descripcion, estudianteId, profesorId, archivoPath);
+        }
+        // =====================================
+
         public bool ActualizarProyecto(int id, string titulo, string descripcion, int estudianteId, int profesorId)
         {
             return _dbHelper.ActualizarProyecto(id, titulo, descripcion, estudianteId, profesorId);
@@ -45,10 +53,9 @@ namespace PlataformaProyectosEscolares.Service
             if (calificacion < 0 || calificacion > 10)
             {
                 MessageBox.Show("La calificación debe estar entre 0 y 10", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
             return _dbHelper.CalificarProyecto(proyectoId, calificacion, comentario);
         }
 
@@ -90,14 +97,13 @@ namespace PlataformaProyectosEscolares.Service
             return _dbHelper.TestConnection();
         }
 
-        // MÉTODO PARA CARGAR DATOS EN UN DATA GRID VIEW
+        // Cargar en DataGridView (general)
         public void CargarProyectosEnDataGridView(DataGridView dataGridView)
         {
             try
             {
                 DataTable proyectos = ObtenerTodosLosProyectos();
                 dataGridView.DataSource = proyectos;
-
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (System.Exception ex)
@@ -106,14 +112,13 @@ namespace PlataformaProyectosEscolares.Service
             }
         }
 
-        // MÉTODO PARA CARGAR PROYECTOS EN DATA GRID VIEW (PARA PROFESOR)
+        // Cargar en DataGridView (para profesor)
         public void CargarProyectosEnDataGridViewProfesor(DataGridView dataGridView)
         {
             try
             {
                 DataTable proyectos = ObtenerProyectosParaProfesor();
                 dataGridView.DataSource = proyectos;
-
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (System.Exception ex)
@@ -122,7 +127,7 @@ namespace PlataformaProyectosEscolares.Service
             }
         }
 
-        // MÉTODO PARA CARGAR ESTUDIANTES EN UN COMBO BOX
+        // Cargar combos
         public void CargarEstudiantesEnComboBox(ComboBox comboBox)
         {
             try
@@ -138,7 +143,6 @@ namespace PlataformaProyectosEscolares.Service
             }
         }
 
-        // MÉTODO PARA CARGAR PROFESORES EN UN COMBO BOX
         public void CargarProfesoresEnComboBox(ComboBox comboBox)
         {
             try
@@ -154,7 +158,7 @@ namespace PlataformaProyectosEscolares.Service
             }
         }
 
-        // MÉTODO PARA VALIDAR DATOS DE PROYECTO
+        // Validación
         public bool ValidarDatosProyecto(string titulo, string descripcion, int estudianteId, int profesorId)
         {
             if (string.IsNullOrWhiteSpace(titulo))
@@ -162,25 +166,21 @@ namespace PlataformaProyectosEscolares.Service
                 MessageBox.Show("El título no puede estar vacío", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(descripcion))
             {
                 MessageBox.Show("La descripción no puede estar vacía", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
             if (estudianteId <= 0)
             {
                 MessageBox.Show("Debe seleccionar un estudiante", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
             if (profesorId <= 0)
             {
                 MessageBox.Show("Debe seleccionar un profesor", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-
             return true;
         }
     }

@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿// Data/DatabaseHelper.cs
+using MySql.Data.MySqlClient;
 using System;
 using System.Configuration;
 using System.Data;
@@ -33,24 +34,22 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
+        // ============================
         // MÉTODOS PARA ESTUDIANTES
+        // ============================
         public DataTable GetEstudiantes()
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "SELECT * FROM Estudiantes";
                     using (var command = new MySqlCommand(query, connection))
+                    using (var adapter = new MySqlDataAdapter(command))
                     {
-                        using (var adapter = new MySqlDataAdapter(command))
-                        {
-                            adapter.Fill(dataTable);
-                        }
+                        adapter.Fill(dataTable);
                     }
                 }
             }
@@ -58,7 +57,6 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener estudiantes: {ex.Message}");
             }
-
             return dataTable;
         }
 
@@ -69,15 +67,12 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "INSERT INTO Estudiantes (Nombre, Email, Grado) VALUES (@nombre, @email, @grado)";
-
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@nombre", nombre);
                         command.Parameters.AddWithValue("@email", email);
                         command.Parameters.AddWithValue("@grado", grado);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -89,24 +84,22 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
+        // ============================
         // MÉTODOS PARA PROFESORES
+        // ============================
         public DataTable GetProfesores()
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "SELECT * FROM Profesores";
                     using (var command = new MySqlCommand(query, connection))
+                    using (var adapter = new MySqlDataAdapter(command))
                     {
-                        using (var adapter = new MySqlDataAdapter(command))
-                        {
-                            adapter.Fill(dataTable);
-                        }
+                        adapter.Fill(dataTable);
                     }
                 }
             }
@@ -114,7 +107,6 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener profesores: {ex.Message}");
             }
-
             return dataTable;
         }
 
@@ -125,15 +117,12 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "INSERT INTO Profesores (Nombre, Especialidad, Email) VALUES (@nombre, @especialidad, @email)";
-
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@nombre", nombre);
                         command.Parameters.AddWithValue("@especialidad", especialidad);
                         command.Parameters.AddWithValue("@email", email);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -145,28 +134,26 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
+        // ============================
         // MÉTODOS PARA PROYECTOS
+        // ============================
         public DataTable GetProyectos()
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
-                    string query = @"SELECT p.*, e.Nombre as EstudianteNombre, pr.Nombre as ProfesorNombre 
-                                   FROM Proyectos p
-                                   LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
-                                   LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id";
-
+                    string query = @"
+                        SELECT p.*, e.Nombre as EstudianteNombre, pr.Nombre as ProfesorNombre
+                        FROM Proyectos p
+                        LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
+                        LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id";
                     using (var command = new MySqlCommand(query, connection))
+                    using (var adapter = new MySqlDataAdapter(command))
                     {
-                        using (var adapter = new MySqlDataAdapter(command))
-                        {
-                            adapter.Fill(dataTable);
-                        }
+                        adapter.Fill(dataTable);
                     }
                 }
             }
@@ -174,36 +161,32 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener proyectos: {ex.Message}");
             }
-
             return dataTable;
         }
 
-        // MÉTODO PARA OBTENER PROYECTOS CON CALIFICACIONES (PARA PROFESOR)
+        // PROYECTOS PARA PROFESOR (con calificación)
         public DataTable GetProyectosParaProfesor()
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
-                    string query = @"SELECT p.Id, p.Titulo, p.Descripcion, p.Fecha, 
-                                   p.Calificacion, p.ComentarioProfesor, p.FechaCalificacion,
-                                   e.Nombre as EstudianteNombre, 
-                                   pr.Nombre as ProfesorNombre
-                                   FROM Proyectos p
-                                   LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
-                                   LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id
-                                   ORDER BY p.Fecha DESC";
-
+                    string query = @"
+                        SELECT p.Id, p.Titulo, p.Descripcion, p.Fecha,
+                               p.Calificacion, p.ComentarioProfesor, p.FechaCalificacion,
+                               p.ArchivoPath,
+                               e.Nombre as EstudianteNombre,
+                               pr.Nombre as ProfesorNombre
+                        FROM Proyectos p
+                        LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
+                        LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id
+                        ORDER BY p.Fecha DESC";
                     using (var command = new MySqlCommand(query, connection))
+                    using (var adapter = new MySqlDataAdapter(command))
                     {
-                        using (var adapter = new MySqlDataAdapter(command))
-                        {
-                            adapter.Fill(dataTable);
-                        }
+                        adapter.Fill(dataTable);
                     }
                 }
             }
@@ -211,11 +194,10 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener proyectos para profesor: {ex.Message}");
             }
-
             return dataTable;
         }
 
-        // MÉTODO PARA CALIFICAR PROYECTO
+        // Calificar proyecto
         public bool CalificarProyecto(int proyectoId, decimal calificacion, string comentario)
         {
             try
@@ -223,20 +205,18 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
-                    string query = @"UPDATE Proyectos 
-                                   SET Calificacion = @calificacion, 
-                                       ComentarioProfesor = @comentario,
-                                       FechaCalificacion = @fecha
-                                   WHERE Id = @id";
-
+                    string query = @"
+                        UPDATE Proyectos
+                        SET Calificacion = @calificacion,
+                            ComentarioProfesor = @comentario,
+                            FechaCalificacion = @fecha
+                        WHERE Id = @id";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@calificacion", calificacion);
                         command.Parameters.AddWithValue("@comentario", comentario);
                         command.Parameters.AddWithValue("@fecha", DateTime.Now.Date);
                         command.Parameters.AddWithValue("@id", proyectoId);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -248,6 +228,7 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
+        // Insertar proyecto (versión original SIN archivo)
         public bool InsertarProyecto(string titulo, string descripcion, int estudianteId, int profesorId)
         {
             try
@@ -255,9 +236,7 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "INSERT INTO Proyectos (Titulo, Descripcion, EstudianteId, ProfesorId, Fecha) VALUES (@titulo, @descripcion, @estudianteId, @profesorId, @fecha)";
-
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@titulo", titulo);
@@ -265,7 +244,6 @@ namespace PlataformaProyectosEscolares.Data
                         command.Parameters.AddWithValue("@estudianteId", estudianteId);
                         command.Parameters.AddWithValue("@profesorId", profesorId);
                         command.Parameters.AddWithValue("@fecha", DateTime.Now);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -277,7 +255,37 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
-        // MÉTODOS PARA ACTUALIZAR
+        // === NUEVA SOBRECARGA: Insertar proyecto CON ArchivoPath ===
+        public bool InsertarProyecto(string titulo, string descripcion, int estudianteId, int profesorId, string archivoPath)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO Proyectos (Titulo, Descripcion, EstudianteId, ProfesorId, Fecha, ArchivoPath) VALUES (@titulo, @descripcion, @estudianteId, @profesorId, @fecha, @archivoPath)";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@titulo", titulo);
+                        command.Parameters.AddWithValue("@descripcion", descripcion);
+                        command.Parameters.AddWithValue("@estudianteId", estudianteId);
+                        command.Parameters.AddWithValue("@profesorId", profesorId);
+                        command.Parameters.AddWithValue("@fecha", DateTime.Now);
+                        command.Parameters.AddWithValue("@archivoPath", (object)archivoPath ?? DBNull.Value);
+
+                        return command.ExecuteNonQuery() > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al insertar proyecto (con archivo): {ex.Message}");
+                return false;
+            }
+        }
+        // ===========================================================
+
+        // Actualizar
         public bool ActualizarProyecto(int id, string titulo, string descripcion, int estudianteId, int profesorId)
         {
             try
@@ -285,9 +293,7 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "UPDATE Proyectos SET Titulo = @titulo, Descripcion = @descripcion, EstudianteId = @estudianteId, ProfesorId = @profesorId WHERE Id = @id";
-
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@titulo", titulo);
@@ -295,7 +301,6 @@ namespace PlataformaProyectosEscolares.Data
                         command.Parameters.AddWithValue("@estudianteId", estudianteId);
                         command.Parameters.AddWithValue("@profesorId", profesorId);
                         command.Parameters.AddWithValue("@id", id);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -307,7 +312,7 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
-        // MÉTODOS PARA ELIMINAR
+        // Eliminar
         public bool EliminarProyecto(int id)
         {
             try
@@ -315,13 +320,10 @@ namespace PlataformaProyectosEscolares.Data
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
                     string query = "DELETE FROM Proyectos WHERE Id = @id";
-
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@id", id);
-
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
@@ -333,22 +335,20 @@ namespace PlataformaProyectosEscolares.Data
             }
         }
 
-        // MÉTODO PARA OBTENER PROYECTOS POR ESTUDIANTE
+        // Por estudiante
         public DataTable GetProyectosPorEstudiante(int estudianteId)
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
-                    string query = @"SELECT p.*, pr.Nombre as ProfesorNombre 
-                                   FROM Proyectos p
-                                   LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id
-                                   WHERE p.EstudianteId = @estudianteId";
-
+                    string query = @"
+                        SELECT p.*, pr.Nombre as ProfesorNombre
+                        FROM Proyectos p
+                        LEFT JOIN Profesores pr ON p.ProfesorId = pr.Id
+                        WHERE p.EstudianteId = @estudianteId";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@estudianteId", estudianteId);
@@ -363,26 +363,23 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener proyectos del estudiante: {ex.Message}");
             }
-
             return dataTable;
         }
 
-        // MÉTODO PARA OBTENER PROYECTOS POR PROFESOR
+        // Por profesor
         public DataTable GetProyectosPorProfesor(int profesorId)
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 using (var connection = new MySqlConnection(_connectionString))
                 {
                     connection.Open();
-
-                    string query = @"SELECT p.*, e.Nombre as EstudianteNombre 
-                                   FROM Proyectos p
-                                   LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
-                                   WHERE p.ProfesorId = @profesorId";
-
+                    string query = @"
+                        SELECT p.*, e.Nombre as EstudianteNombre
+                        FROM Proyectos p
+                        LEFT JOIN Estudiantes e ON p.EstudianteId = e.Id
+                        WHERE p.ProfesorId = @profesorId";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@profesorId", profesorId);
@@ -397,9 +394,7 @@ namespace PlataformaProyectosEscolares.Data
             {
                 MessageBox.Show($"Error al obtener proyectos del profesor: {ex.Message}");
             }
-
             return dataTable;
         }
     }
 }
-

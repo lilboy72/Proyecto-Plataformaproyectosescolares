@@ -1,4 +1,5 @@
-﻿namespace PlataformaProyectosEscolares.Forms
+﻿// Forms/SubirProyectoForm.Designer.cs
+namespace PlataformaProyectosEscolares.Forms
 {
     partial class SubirProyectoForm
     {
@@ -30,6 +31,13 @@
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnCancelar = new System.Windows.Forms.Button();
             this.lblContadorDescripcion = new System.Windows.Forms.Label();
+
+            // === NUEVOS CONTROLES PARA ARCHIVO ===
+            this.lblArchivo = new System.Windows.Forms.Label();
+            this.txtArchivo = new System.Windows.Forms.TextBox();
+            this.btnSeleccionarArchivo = new System.Windows.Forms.Button();
+            // =====================================
+
             this.SuspendLayout();
             // 
             // lblTitulo
@@ -119,9 +127,37 @@
             this.dtpFecha.Size = new System.Drawing.Size(200, 20);
             this.dtpFecha.TabIndex = 9;
             // 
+            // === NUEVOS CONTROLES - ARCHIVO ===
+            // lblArchivo
+            this.lblArchivo.AutoSize = true;
+            this.lblArchivo.Location = new System.Drawing.Point(20, 330);
+            this.lblArchivo.Name = "lblArchivo";
+            this.lblArchivo.Size = new System.Drawing.Size(46, 13);
+            this.lblArchivo.TabIndex = 13;
+            this.lblArchivo.Text = "Archivo:";
+            // 
+            // txtArchivo
+            // 
+            this.txtArchivo.Location = new System.Drawing.Point(20, 350);
+            this.txtArchivo.Name = "txtArchivo";
+            this.txtArchivo.ReadOnly = true;
+            this.txtArchivo.Size = new System.Drawing.Size(305, 20);
+            this.txtArchivo.TabIndex = 14;
+            // 
+            // btnSeleccionarArchivo
+            // 
+            this.btnSeleccionarArchivo.Location = new System.Drawing.Point(335, 347);
+            this.btnSeleccionarArchivo.Name = "btnSeleccionarArchivo";
+            this.btnSeleccionarArchivo.Size = new System.Drawing.Size(85, 24);
+            this.btnSeleccionarArchivo.TabIndex = 15;
+            this.btnSeleccionarArchivo.Text = "Seleccionar...";
+            this.btnSeleccionarArchivo.UseVisualStyleBackColor = true;
+            this.btnSeleccionarArchivo.Click += new System.EventHandler(this.btnSeleccionarArchivo_Click);
+            // =====================================
+            // 
             // btnGuardar
             // 
-            this.btnGuardar.Location = new System.Drawing.Point(240, 340);
+            this.btnGuardar.Location = new System.Drawing.Point(240, 390);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(85, 30);
             this.btnGuardar.TabIndex = 10;
@@ -131,7 +167,7 @@
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(335, 340);
+            this.btnCancelar.Location = new System.Drawing.Point(335, 390);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(85, 30);
             this.btnCancelar.TabIndex = 11;
@@ -152,7 +188,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 390);
+            this.ClientSize = new System.Drawing.Size(450, 440);
+            this.Controls.Add(this.lblArchivo);
+            this.Controls.Add(this.txtArchivo);
+            this.Controls.Add(this.btnSeleccionarArchivo);
             this.Controls.Add(this.lblContadorDescripcion);
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.btnGuardar);
@@ -189,5 +228,10 @@
         private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.Label lblContadorDescripcion;
+
+        // Nuevos
+        private System.Windows.Forms.Label lblArchivo;
+        private System.Windows.Forms.TextBox txtArchivo;
+        private System.Windows.Forms.Button btnSeleccionarArchivo;
     }
 }
